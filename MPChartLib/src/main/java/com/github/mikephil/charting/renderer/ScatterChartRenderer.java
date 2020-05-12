@@ -64,9 +64,8 @@ public class ScatterChartRenderer extends LineScatterCandleRadarRenderer {
             return;
         }
 
-        int max = (int)(Math.min(
-                Math.ceil((float)dataSet.getEntryCount() * mAnimator.getPhaseX()),
-                (float)dataSet.getEntryCount()));
+        int max = (int) (Math.min(Math.ceil((float) dataSet.getEntryCount() * mAnimator.getPhaseX()),
+                (float) dataSet.getEntryCount()));
 
         for (int i = 0; i < max; i++) {
 
@@ -80,15 +79,11 @@ public class ScatterChartRenderer extends LineScatterCandleRadarRenderer {
             if (!viewPortHandler.isInBoundsRight(mPixelBuffer[0]))
                 break;
 
-            if (!viewPortHandler.isInBoundsLeft(mPixelBuffer[0])
-                    || !viewPortHandler.isInBoundsY(mPixelBuffer[1]))
+            if (!viewPortHandler.isInBoundsLeft(mPixelBuffer[0]) || !viewPortHandler.isInBoundsY(mPixelBuffer[1]))
                 continue;
 
-            mRenderPaint.setColor(dataSet.getColor(i / 2));
-            renderer.renderShape(
-                    c, dataSet, mViewPortHandler,
-                    mPixelBuffer[0], mPixelBuffer[1],
-                    mRenderPaint);
+            mRenderPaint.setColor(dataSet.getColor(i));
+            renderer.renderShape(c, dataSet, mViewPortHandler, mPixelBuffer[0], mPixelBuffer[1], mRenderPaint);
         }
     }
 
@@ -112,9 +107,8 @@ public class ScatterChartRenderer extends LineScatterCandleRadarRenderer {
 
                 mXBounds.set(mChart, dataSet);
 
-                float[] positions = mChart.getTransformer(dataSet.getAxisDependency())
-                        .generateTransformedValuesScatter(dataSet,
-                                mAnimator.getPhaseX(), mAnimator.getPhaseY(), mXBounds.min, mXBounds.max);
+                float[] positions = mChart.getTransformer(dataSet.getAxisDependency()).generateTransformedValuesScatter(
+                        dataSet, mAnimator.getPhaseX(), mAnimator.getPhaseY(), mXBounds.min, mXBounds.max);
 
                 float shapeSize = Utils.convertDpToPixel(dataSet.getScatterShapeSize());
 
@@ -137,19 +131,16 @@ public class ScatterChartRenderer extends LineScatterCandleRadarRenderer {
                     Entry entry = dataSet.getEntryForIndex(j / 2 + mXBounds.min);
 
                     if (dataSet.isDrawValuesEnabled()) {
-                        drawValue(c, formatter.getPointLabel(entry), positions[j], positions[j + 1] - shapeSize, dataSet.getValueTextColor(j / 2 + mXBounds.min));
+                        drawValue(c, formatter.getPointLabel(entry), positions[j], positions[j + 1] - shapeSize,
+                                dataSet.getValueTextColor(j / 2 + mXBounds.min));
                     }
 
                     if (entry.getIcon() != null && dataSet.isDrawIconsEnabled()) {
 
                         Drawable icon = entry.getIcon();
 
-                        Utils.drawImage(
-                                c,
-                                icon,
-                                (int)(positions[j] + iconsOffset.x),
-                                (int)(positions[j + 1] + iconsOffset.y),
-                                icon.getIntrinsicWidth(),
+                        Utils.drawImage(c, icon, (int) (positions[j] + iconsOffset.x),
+                                (int) (positions[j + 1] + iconsOffset.y), icon.getIntrinsicWidth(),
                                 icon.getIntrinsicHeight());
                     }
                 }
@@ -186,8 +177,8 @@ public class ScatterChartRenderer extends LineScatterCandleRadarRenderer {
             if (!isInBoundsX(e, set))
                 continue;
 
-            MPPointD pix = mChart.getTransformer(set.getAxisDependency()).getPixelForValues(e.getX(), e.getY() * mAnimator
-                    .getPhaseY());
+            MPPointD pix = mChart.getTransformer(set.getAxisDependency()).getPixelForValues(e.getX(),
+                    e.getY() * mAnimator.getPhaseY());
 
             high.setDraw((float) pix.x, (float) pix.y);
 
