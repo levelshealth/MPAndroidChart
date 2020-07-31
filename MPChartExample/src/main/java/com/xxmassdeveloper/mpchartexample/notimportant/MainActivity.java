@@ -31,6 +31,7 @@ import com.xxmassdeveloper.mpchartexample.InvertedLineChartActivity;
 import com.xxmassdeveloper.mpchartexample.LineChartActivity1;
 import com.xxmassdeveloper.mpchartexample.LineChartActivity2;
 import com.xxmassdeveloper.mpchartexample.LineChartActivityColored;
+import com.xxmassdeveloper.mpchartexample.LineChartActivityRangeSeparators;
 import com.xxmassdeveloper.mpchartexample.LineChartTime;
 import com.xxmassdeveloper.mpchartexample.ListViewBarChartActivity;
 import com.xxmassdeveloper.mpchartexample.ListViewMultiChartActivity;
@@ -123,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         objects.add(36, new ContentItem("Realtime", "Add data points in realtime."));
         objects.add(37, new ContentItem("Hourly", "Uses the current time to add a data point for each hour."));
         //objects.add(38, new ContentItem("Realm.io Examples", "See more examples that use Realm.io mobile database."));
+        objects.add(38, new ContentItem("Range Separators", "Line Chart with range separators"));
 
         MyAdapter adapter = new MyAdapter(this, objects);
 
@@ -233,6 +235,9 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                 break;
             case 37:
                 i = new Intent(this, LineChartTime.class);
+                break;
+            case 38:
+                i = new Intent(this, LineChartActivityRangeSeparators.class);
                 break;
             /*case 38:
                 i = new Intent(this, RealmMainActivity.class);

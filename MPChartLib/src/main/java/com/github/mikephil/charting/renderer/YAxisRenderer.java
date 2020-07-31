@@ -349,4 +349,9 @@ public class YAxisRenderer extends AxisRenderer {
             c.restoreToCount(clipRestoreCount);
         }
     }
+
+    @Override
+    public void renderRangeSeparators(Canvas c) {
+        return;
+    }
 }

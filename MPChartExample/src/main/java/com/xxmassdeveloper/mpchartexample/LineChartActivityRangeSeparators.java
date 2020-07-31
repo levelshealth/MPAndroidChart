@@ -9,7 +9,6 @@ import android.graphics.DashPathEffect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,12 +17,15 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.Legend.LegendForm;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.LimitLine.LimitLabelPosition;
+import com.github.mikephil.charting.components.RangeSeparator;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -47,7 +49,7 @@ import java.util.List;
  * @since 1.7.4
  * @version 3.1.0
  */
-public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListener,
+public class LineChartActivityRangeSeparators extends DemoBase implements OnSeekBarChangeListener,
         OnChartValueSelectedListener {
 
     private LineChart chart;
@@ -61,7 +63,7 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_linechart);
 
-        setTitle("LineChartActivity1");
+        setTitle("LineChartActivity Range Separators");
 
         tvX = findViewById(R.id.tvXMax);
         tvY = findViewById(R.id.tvYMax);
@@ -130,6 +132,23 @@ public class LineChartActivity1 extends DemoBase implements OnSeekBarChangeListe
             // axis range
             yAxis.setAxisMaximum(200f);
             yAxis.setAxisMinimum(-50f);
+        }
+
+        { // Create Range separators
+            RangeSeparator rs = new RangeSeparator(20f, 40f, "Pending", 60);
+            rs.setLineWidth(4f);
+            rs.setBottomLineWidth(4f);
+            rs.enableBottomDashedLine(10f, 10f, 0f);
+            rs.setTextSize(10f);
+            rs.setTypeface(tfRegular);
+            rs.setXOffset(0);
+            rs.setLineColor(Color.rgb(7, 91, 191));
+            rs.setBottomLineColor(Color.rgb(7, 91, 191));
+            rs.setIcon(getResources().getDrawable(R.drawable.star));
+            rs.setIconXOffset(85);
+            rs.setIconYOffset(-30);
+
+            xAxis.addRangeSeparator(rs);
         }
 
 

@@ -226,6 +226,9 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
         if (mXAxis.isEnabled() && mXAxis.isDrawLimitLinesBehindDataEnabled())
             mXAxisRenderer.renderLimitLines(canvas);
 
+        if (mXAxis.isEnabled() && mXAxis.isDrawRangeSeparatorsBehindDataEnabled())
+            mXAxisRenderer.renderRangeSeparators(canvas);
+
         if (mAxisLeft.isEnabled() && mAxisLeft.isDrawLimitLinesBehindDataEnabled())
             mAxisRendererLeft.renderLimitLines(canvas);
 
@@ -261,6 +264,9 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
 
         if (mXAxis.isEnabled() && !mXAxis.isDrawLimitLinesBehindDataEnabled())
             mXAxisRenderer.renderLimitLines(canvas);
+
+        if (mXAxis.isEnabled() && !mXAxis.isDrawRangeSeparatorsBehindDataEnabled())
+            mXAxisRenderer.renderRangeSeparators(canvas);
 
         if (mAxisLeft.isEnabled() && !mAxisLeft.isDrawLimitLinesBehindDataEnabled())
             mAxisRendererLeft.renderLimitLines(canvas);

@@ -41,6 +41,11 @@ public abstract class AxisRenderer extends Renderer {
     protected Paint mAxisLinePaint;
 
     /**
+     * paint used for the range separators
+     */
+    protected Paint mRangeSeparatorPaint;
+
+    /**
      * paint used for the limit lines
      */
     protected Paint mLimitLinePaint;
@@ -68,6 +73,9 @@ public abstract class AxisRenderer extends Renderer {
 
             mLimitLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             mLimitLinePaint.setStyle(Paint.Style.STROKE);
+
+            mRangeSeparatorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            mRangeSeparatorPaint.setStyle(Paint.Style.STROKE);
         }
     }
 
@@ -290,4 +298,11 @@ public abstract class AxisRenderer extends Renderer {
      * @param c
      */
     public abstract void renderLimitLines(Canvas c);
+
+    /**
+     * Draws the {@link com.github.mikephil.charting.components.RangeSeparator} associated with this axis to the screen.
+     *
+     * @param c
+     */
+    public abstract void renderRangeSeparators(Canvas c);
 }
