@@ -6,8 +6,11 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.RangeSeparator;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.XAxis.XAxisPosition;
 import com.github.mikephil.charting.utils.FSize;
@@ -395,6 +398,157 @@ public class XAxisRenderer extends AxisRenderer {
                 mLimitLinePaint.setTextAlign(Align.RIGHT);
                 c.drawText(label, position[0] - xOffset, mViewPortHandler.contentBottom() - yOffset, mLimitLinePaint);
             }
+        }
+    }
+
+    protected float[] mRenderRangeSeparatorsBuffer = new float[2];
+    protected float[] mRenderRangeSeparatorsBufferAlt = new float[2];
+    protected RectF mRangeSeparatorClippingRect = new RectF();
+
+    /**
+     * Draws the {@link com.github.mikephil.charting.components.RangeSeparator} associated with this axis to the screen.
+     *
+     * @param c
+     */
+    @Override
+    public void renderRangeSeparators(Canvas c) {
+
+        Log.d("MPAndroidChart LEVeLS", "Rendering range separators");
+
+        List<RangeSeparator> rangeSeparators = mXAxis.getRangeSeparators();
+
+        if (rangeSeparators == null || rangeSeparators.size() <= 0)
+            return;
+
+        float[] position = mRenderRangeSeparatorsBuffer;
+        position[0] = 0;
+        position[1] = 0;
+
+        float[] positionAlt = mRenderRangeSeparatorsBufferAlt;
+        positionAlt[0] = 0;
+        positionAlt[1] = 0;
+
+        for (int i = 0; i < rangeSeparators.size(); i++) {
+
+            RangeSeparator l = rangeSeparators.get(i);
+
+            if (!l.isEnabled())
+                continue;
+
+            int clipRestoreCount = c.save();
+            mRangeSeparatorClippingRect.set(mViewPortHandler.getContentRect());
+            mRangeSeparatorClippingRect.inset(-l.getLineWidth(), 0.f);
+            c.clipRect(mRangeSeparatorClippingRect);
+
+
+            // display the first line
+            position[0] = l.getFrom();
+            position[1] = 0.f;
+            mTrans.pointValuesToPixel(position);
+            renderRangeSeparatorLine(c, l, position);
+
+            // display the text in the middle of the two lines
+            position[0] = l.getFrom() + (l.getTo() - l.getFrom()) / 2;
+            mTrans.pointValuesToPixel(position);
+            renderRangeSeparatorLabel(c, l, position, 2.f + l.getYOffset());
+
+            // display the second line
+            position[0] = l.getTo();
+            mTrans.pointValuesToPixel(position);
+            renderRangeSeparatorLine(c, l, position);
+
+            // display the bottom line
+            position[0] = l.getFrom();
+            mTrans.pointValuesToPixel(position);
+            positionAlt[0] = l.getTo();
+            positionAlt[1] = 0.f;
+            mTrans.pointValuesToPixel(positionAlt);
+            renderRangeSeparatorBottomLine(c, l, position, positionAlt);
+
+
+            // display the icon
+            if (l.getIcon() != null) {
+
+                Drawable icon = l.getIcon();
+                position[0] = l.getFrom() + (l.getTo() - l.getFrom()) / 2;
+                mTrans.pointValuesToPixel(position);
+
+                Utils.drawImage(
+                    c,
+                    icon,
+                    (int)(position[0] + l.getIconXOffset()),
+                    (int)(mViewPortHandler.contentBottom() + l.getIconYOffset()),
+                    icon.getIntrinsicWidth(),
+                    icon.getIntrinsicHeight()
+                );
+            }
+
+            c.restoreToCount(clipRestoreCount);
+        }
+    }
+
+    float[] mRangeSeparatorSegmentsBuffer = new float[4];
+    private Path mRangeSeparatorPath = new Path();
+
+    public void renderRangeSeparatorBottomLine(Canvas c, RangeSeparator rangeSeparator, float[] position, float[] finalPosition) {
+        mRangeSeparatorSegmentsBuffer[0] = position[0];
+        mRangeSeparatorSegmentsBuffer[1] = mViewPortHandler.contentBottom();
+        mRangeSeparatorSegmentsBuffer[2] = finalPosition[0];
+        mRangeSeparatorSegmentsBuffer[3] = mViewPortHandler.contentBottom();
+
+        mRangeSeparatorPath.reset();
+        mRangeSeparatorPath.moveTo(mRangeSeparatorSegmentsBuffer[0], mRangeSeparatorSegmentsBuffer[1]);
+        mRangeSeparatorPath.lineTo(mRangeSeparatorSegmentsBuffer[2], mRangeSeparatorSegmentsBuffer[3]);
+
+        mRangeSeparatorPaint.setStyle(Paint.Style.STROKE);
+        mRangeSeparatorPaint.setColor(rangeSeparator.getBottomLineColor());
+        mRangeSeparatorPaint.setStrokeWidth(rangeSeparator.getBottomLineWidth());
+        mRangeSeparatorPaint.setPathEffect(rangeSeparator.getBottomDashPathEffect());
+
+        c.drawPath(mRangeSeparatorPath, mRangeSeparatorPaint);
+    }
+
+
+
+    public void renderRangeSeparatorLine(Canvas c, RangeSeparator rangeSeparator, float[] position) {
+        mRangeSeparatorSegmentsBuffer[0] = position[0];
+        mRangeSeparatorSegmentsBuffer[1] = mViewPortHandler.contentBottom() - rangeSeparator.getHeight();
+        mRangeSeparatorSegmentsBuffer[2] = position[0];
+        mRangeSeparatorSegmentsBuffer[3] = mViewPortHandler.contentBottom();
+
+        mRangeSeparatorPath.reset();
+        mRangeSeparatorPath.moveTo(mRangeSeparatorSegmentsBuffer[0], mRangeSeparatorSegmentsBuffer[1]);
+        mRangeSeparatorPath.lineTo(mRangeSeparatorSegmentsBuffer[2], mRangeSeparatorSegmentsBuffer[3]);
+
+        mRangeSeparatorPaint.setStyle(Paint.Style.STROKE);
+        mRangeSeparatorPaint.setColor(rangeSeparator.getLineColor());
+        mRangeSeparatorPaint.setStrokeWidth(rangeSeparator.getLineWidth());
+        mRangeSeparatorPaint.setPathEffect(rangeSeparator.getDashPathEffect());
+
+        c.drawPath(mRangeSeparatorPath, mRangeSeparatorPaint);
+    }
+
+    public void renderRangeSeparatorLabel(Canvas c, RangeSeparator rangeSeparator, float[] position, float yOffset) {
+        String label = rangeSeparator.getLabel();
+
+        // if drawing the limit-value label is enabled
+        if (label != null && !label.equals("")) {
+
+            mRangeSeparatorPaint.setStyle(rangeSeparator.getTextStyle());
+            mRangeSeparatorPaint.setPathEffect(null);
+            mRangeSeparatorPaint.setColor(rangeSeparator.getTextColor());
+            mRangeSeparatorPaint.setStrokeWidth(0.5f);
+            mRangeSeparatorPaint.setTextSize(rangeSeparator.getTextSize());
+
+
+            float xOffset = rangeSeparator.getXOffset();
+
+
+            mRangeSeparatorPaint.setTextAlign(Align.CENTER);
+            final float labelLineHeight = Utils.calcTextHeight(mRangeSeparatorPaint, label);
+            c.drawText(label, position[0] - xOffset, mViewPortHandler.contentBottom() - yOffset - labelLineHeight,
+                    mRangeSeparatorPaint);
+
         }
     }
 }
