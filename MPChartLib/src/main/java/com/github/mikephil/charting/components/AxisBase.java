@@ -102,6 +102,16 @@ public abstract class AxisBase extends ComponentBase {
     private DashPathEffect mGridDashPathEffect = null;
 
     /**
+     * array of range separators that can be set for the axis
+     */
+    protected List<RangeSeparator> mRangeSeparators;
+
+    /**
+     * flag indicating the range separators layer depth
+     */
+    protected boolean mDrawRangeSeparatorBehindData = false;
+
+    /**
      * array of limit lines that can be set for the axis
      */
     protected List<LimitLine> mLimitLines;
@@ -159,6 +169,7 @@ public abstract class AxisBase extends ComponentBase {
         this.mXOffset = Utils.convertDpToPixel(5f);
         this.mYOffset = Utils.convertDpToPixel(5f);
         this.mLimitLines = new ArrayList<LimitLine>();
+        this.mRangeSeparators= new ArrayList<RangeSeparator>();
     }
 
     /**
@@ -178,6 +189,61 @@ public abstract class AxisBase extends ComponentBase {
     public boolean isDrawGridLinesEnabled() {
         return mDrawGridLines;
     }
+
+    /**
+     * Adds a new {@link RangeSeparator} to this axis.
+     *
+     * @param r
+     */
+    public void addRangeSeparator(RangeSeparator r) {
+        mRangeSeparators.add(r);
+
+        if (mRangeSeparators.size() > 6) {
+            Log.e("MPAndroiChart",
+                    "Warning! You have more than 6 LimitLines on your axis, do you really want " +
+                            "that?");
+        }
+    }
+
+    /**
+     * Removes the specified {@link RangeSeparator} from the axis.
+     *
+     * @param r
+     */
+    public void removeRangeSeparator(RangeSeparator r) {
+        mRangeSeparators.remove(r);
+    }
+
+    /**
+     * Removes all {@link RangeSeparator} from the axis.
+     */
+    public void removeAllRangeSeparators() {
+        mRangeSeparators.clear();
+    }
+
+    /**
+     * Returns the {@link RangeSeparator} of this axis.
+     *
+     * @return
+     */
+    public List<RangeSeparator> getRangeSeparators() {
+        return mRangeSeparators;
+    }
+
+    /**
+     * If this is set to true, the RangeSeparators are drawn behind the actual data,
+     * otherwise on top. Default: false
+     *
+     * @param enabled
+     */
+    public void setDrawRangeSeparatorsBehindData(boolean enabled) {
+        mDrawRangeSeparatorBehindData= enabled;
+    }
+
+    public boolean isDrawRangeSeparatorsBehindDataEnabled() {
+        return mDrawRangeSeparatorBehindData;
+    }
+
 
     /**
      * Set this to true if the line alongside the axis should be drawn or not.
